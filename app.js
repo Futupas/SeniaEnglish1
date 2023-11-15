@@ -1,16 +1,10 @@
 'use strict';
 
 const DATASETS = [
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
-    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 108 },
+    { name: 'Family and friends', key: 'family', size: 67 },
+    { name: 'Food', key: 'food', size: 67 },
+    { name: 'Weather', key: 'weather', size: 54 },
 ];
 const COUNT_PER_ONE = 3;
 
