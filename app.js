@@ -1,12 +1,12 @@
 'use strict';
 
 const DATASETS = [
-    { name: 'Basic', key: 'basic', size: 108 },
+    { name: 'Basic words', key: 'basic', size: 108 },
     { name: 'Family and friends', key: 'family', size: 67 },
     { name: 'Food', key: 'food', size: 67 },
     { name: 'Weather', key: 'weather', size: 54 },
 ];
-const COUNT_PER_ONE = 3;
+const COUNT_PER_ONE = 10;
 
 const mainDiv = document.getElementById('main');
 
