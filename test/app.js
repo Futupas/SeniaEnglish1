@@ -26,7 +26,7 @@ async function initialize() {
     window.dataset = dataset;
     window.current = -1;
     window.hashExplained = hash;
-    window.errors = [];
+    window.mistakes = [];
     next();
 }
 
@@ -47,14 +47,13 @@ function next() {
     if (next === window.dataset.length - 1) {
         document.getElementById('btn-next').innerText = 'Finish';
     } else if (next === window.dataset.length) {
-        console.log('Finished');
-        console.log(window.errors);
-        infoDiv.innerText = 'Finished ';
+        console.log(window.mistakes);
+        infoDiv.innerText = generateFinishingText();
+        console.log(generateTgBotText());
         window.finished = true;
         blurDiv.style.backgroundColor = 'rgba(0, 0, 255, .1)';
         blurDiv.classList.remove('hidden');
-        document.getElementById('main').classList.add('disabled');
-        document.getElementById('main').remove();
+        document.getElementById('main').classList.add('hidden');
         return;
     }
 
@@ -76,7 +75,6 @@ function next() {
         infoDiv.innerText = 'Correct!';
         blurDiv.style.backgroundColor = 'rgba(0, 255, 0, .1)';
         blurDiv.classList.remove('hidden');
-        blurDiv.focus();
         setTimeout(() => {
             blurDiv.classList.add('hidden');
         }, 200);
@@ -84,8 +82,7 @@ function next() {
         infoDiv.innerText = 'Incorrect(\n\nCorrect answer is "' + correctAnswer + '"';
         blurDiv.style.backgroundColor = 'rgba(255, 0, 0, .1)';
         blurDiv.classList.remove('hidden');
-        blurDiv.focus();
-        window.errors.push({ ...question, answer: input});
+        window.mistakes.push({ ...question, answer: input});
     }
 }
 
@@ -123,4 +120,55 @@ window.onkeyup = e => {
     if (!blurDiv.classList.contains('hidden') && (e.code === 'Enter' || e.code === 'Space')) {
         blurDiv.classList.add('hidden');
     }
+}
+
+function generateFinishingText() {
+    const count = window.dataset.length;
+    const mistakes = window.mistakes.length;
+    const correct = count - mistakes;
+    const percentage = Math.round(correct / count * 100 * 100) / 100;
+    
+    let text = `Your score is ${correct}/${count} (${percentage}%)`;
+
+    if (mistakes) {
+        text += '\n\nMistakes:'
+        for (const mistake of window.mistakes) {
+            const word = mistake.reverse ? mistake.ukrainian : mistake.english;
+            const answer = mistake.answer;
+            const correct = mistake.reverse ? mistake.english : mistake.ukrainian;
+            text += `\n${word} -> ${answer}. Correct is \"${correct}\"`;
+        }
+    } else {
+        text += '\n\nCongratulations!'
+    }
+
+    return text;
+}
+function generateTgBotText() {
+    const count = window.dataset.length;
+    const mistakes = window.mistakes.length;
+    const correct = count - mistakes;
+    const percentage = Math.round(correct / count * 100 * 100) / 100;
+    
+    const datasetName = document.getElementById('dataset-name').innerText;
+    const all = window.hashExplained.all ? 
+        'all' :
+        `${window.hashExplained.starting}-${window.hashExplained.ending}`;
+
+    let text = `Senia finished English test (${datasetName} - ${all})`;
+    text += `\nThe score is ${correct}/${count} (${percentage}%)`;
+
+    if (mistakes) {
+        text += '\n\nMistakes:'
+        for (const mistake of window.mistakes) {
+            const word = mistake.reverse ? mistake.ukrainian : mistake.english;
+            const answer = mistake.answer;
+            const correct = mistake.reverse ? mistake.english : mistake.ukrainian;
+            text += `\n${word} -> ${answer}. (${correct})`;
+        }
+    } else {
+        text += '\nVery good!'
+    }
+
+    return text;
 }
