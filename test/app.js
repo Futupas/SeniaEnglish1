@@ -34,6 +34,8 @@ async function initialize() {
 initialize();
 window.onhashchange = () => { initialize(); }
 
+let afterBlurClose = undefined;
+
 function next() {
     //todo divide into 'Check previos' and 'Prepare next'
     const input = document.getElementById('input').value.trim().toLowerCase();
@@ -44,26 +46,15 @@ function next() {
     const next = window.current + 1;
     window.current = next;
 
-    if (next === window.dataset.length - 1) {
-        document.getElementById('btn-next').innerText = 'Finish';
-    } else if (next === window.dataset.length) {
-        console.log(window.mistakes);
-        infoDiv.innerText = generateFinishingText();
-        console.log(generateTgBotText());
-        window.finished = true;
-        blurDiv.style.backgroundColor = 'rgba(0, 0, 255, .1)';
-        blurDiv.classList.remove('hidden');
-        document.getElementById('main').classList.add('hidden');
-        return;
+    if (next !== window.dataset.length) {
+        const showingQuestion = window.dataset[next];
+        document.getElementById('main').innerText = showingQuestion.reverse ? 
+            showingQuestion.ukrainian : 
+            showingQuestion.english;
+        document.getElementById('input').value = '';
+        document.getElementById('input').setAttribute('placeholder', (showingQuestion.reverse ? 'English...' : 'Українська'));
     }
 
-    const showingQuestion = window.dataset[next];
-    document.getElementById('main').innerText = showingQuestion.reverse ? 
-        showingQuestion.ukrainian : 
-        showingQuestion.english;
-
-    document.getElementById('input').value = '';
-    document.getElementById('input').setAttribute('placeholder', (showingQuestion.reverse ? 'English...' : 'Українська'));
 
     if (next === 0) return;
 
@@ -71,18 +62,36 @@ function next() {
 
     const correctAnswer = question.reverse ? question.english : question.ukrainian;
 
+    function checkLast() {
+        if (next === window.dataset.length - 1) {
+            document.getElementById('btn-next').innerText = 'Finish';
+        } else if (next === window.dataset.length) {
+            infoDiv.innerText = generateFinishingText();
+            sendMessageToBot(generateTgBotText());
+            window.finished = true;
+            blurDiv.style.backgroundColor = 'rgba(0, 0, 255, .1)';
+            blurDiv.classList.remove('hidden');
+            document.getElementById('main').classList.add('hidden');
+            return;
+        }
+    }
+
     if (correctAnswer === input) {
         infoDiv.innerText = 'Correct!';
         blurDiv.style.backgroundColor = 'rgba(0, 255, 0, .1)';
         blurDiv.classList.remove('hidden');
         setTimeout(() => {
             blurDiv.classList.add('hidden');
+            checkLast();
         }, 200);
     } else {
         infoDiv.innerText = 'Incorrect(\n\nCorrect answer is "' + correctAnswer + '"';
         blurDiv.style.backgroundColor = 'rgba(255, 0, 0, .1)';
         blurDiv.classList.remove('hidden');
         window.mistakes.push({ ...question, answer: input});
+        afterBlurClose = () => {
+            checkLast();
+        }
     }
 }
 
@@ -115,10 +124,12 @@ document.getElementById('input').onkeyup = e => {
 blurDiv.onclick = e => {
     if (window.finished) return;
     blurDiv.classList.add('hidden');
+    if (afterBlurClose) afterBlurClose();
 }
 window.onkeyup = e => {
     if (!blurDiv.classList.contains('hidden') && (e.code === 'Enter' || e.code === 'Space')) {
         blurDiv.classList.add('hidden');
+        if (afterBlurClose) afterBlurClose();
     }
 }
 
@@ -136,7 +147,7 @@ function generateFinishingText() {
             const word = mistake.reverse ? mistake.ukrainian : mistake.english;
             const answer = mistake.answer;
             const correct = mistake.reverse ? mistake.english : mistake.ukrainian;
-            text += `\n${word} -> ${answer}. Correct is \"${correct}\"`;
+            text += `\n${word} → ${answer}. Correct is \"${correct}\"`;
         }
     } else {
         text += '\n\nCongratulations!'
@@ -164,7 +175,7 @@ function generateTgBotText() {
             const word = mistake.reverse ? mistake.ukrainian : mistake.english;
             const answer = mistake.answer;
             const correct = mistake.reverse ? mistake.english : mistake.ukrainian;
-            text += `\n${word} -> ${answer}. (${correct})`;
+            text += `\n${word} → ${answer}. (${correct})`;
         }
     } else {
         text += '\nVery good!'
@@ -172,3 +183,22 @@ function generateTgBotText() {
 
     return text;
 }
+
+const BOT_TOKEN = '1375310609:AAFs1LGHjV8l_zgm0B1uy_0HV7ZFYoukjKg';
+const MY_TG_ID = '387489833';
+
+async function sendMessageToBot(message) {
+	const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${MY_TG_ID}&text=${encodeURI(message).replaceAll('+', '%2b')}&parse_mode=html`;
+	const req = await fetch(url, { mode: 'cors' });
+	const res = await req.json();
+    if (res.error_code === 429) { // 429 Too Many Requests
+        const timeToSleep = (res.parameters?.retry_after || (Math.random() * 5 + 5)) * 1000;
+        await sleep(timeToSleep);
+        return sendMessageToBot(message);
+    }
+	return res.ok === true;
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
