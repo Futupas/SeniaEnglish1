@@ -13,8 +13,10 @@ sky,/skaɪ/,скай,небо,небо
 dog,/dɒɡ/,дог,собака,пес
 `;
 
+const orderInput = document.getElementById('order-input');
+
 async function initialize() {
-    document.getElementById('order-input').checked = !!+localStorage['order'];
+    orderInput.checked = !!+localStorage['order'];
     const hash = parseHash();
     if (!hash.ok) {
         alert('Error: ' + hash.reason);
@@ -26,6 +28,18 @@ async function initialize() {
     let dataset = FILE.split('\n').filter(x => x.length && x.length > 3);
     dataset.shift();
 
+    dataset = dataset.map(x => {
+        x = x.replace('\r', '');
+        const splitted = x.split(',');
+        return {
+            english:       splitted[0],
+            transcription: splitted[1],
+            pronunciation: splitted[2],
+            russian:       splitted[3],
+            ukrainian:     splitted[4],
+        };
+    })
+
     if (!hash.all) {
         if (hash.starting < 1 || hash.ending > dataset.length) {
             alert('Error: Wrong start or end number');
@@ -35,16 +49,17 @@ async function initialize() {
         dataset = dataset.slice(hash.starting - 1, hash.ending);
     }
 
-    console.log(dataset);
-
+    window.dataset = dataset;
+    window.current = 0;
+    next();
 }
 
 
 initialize();
 window.onhashchange = () => { initialize(); }
 
-document.getElementById('order-input').oninput = () => {
-    localStorage['order'] = document.getElementById('order-input').checked ? 1 : 0;
+orderInput.oninput = () => {
+    localStorage['order'] = orderInput.checked ? 1 : 0;
 }
 
 function parseHash() {
@@ -90,5 +105,31 @@ function parseHash() {
         ok: false,
         reason: 'Wrong hash',
     };
+}
+
+function next() {
+    const next = orderInput.checked ? 
+        ((window.current + 1) % window.dataset.length) : 
+        nextRandomInt(0, window.dataset.length, window.current);
+    window.current = next;
+
+    document.getElementById('main').innerText = JSON.stringify(window.dataset[next]);
+
+}
+
+document.getElementById('btn-next').onclick = () => { next(); };
+
+function nextRandomInt(min, max, current = null) {
+    // Ensure that min and max are integers
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    // Generate a random number within the specified range
+    const next = Math.floor(Math.random() * (max - min)) + min;
+
+    if (current === next) {
+        return nextRandomInt(min, max, current);
+    } else {
+        return next;
+    }
 }
 
