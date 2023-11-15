@@ -12,7 +12,9 @@ async function initialize() {
         return;
     }
 
-    dataset = dataset.map(x => { return { ...x, reverse: false }; });
+    document.getElementById('dataset-name').innerText = dataset.name;
+
+    dataset = dataset.dataset.map(x => { return { ...x, reverse: false }; });
     const reverseDataset = dataset.map(x => { return { ...x, reverse: true }; });
     dataset.push(...reverseDataset);
     shuffleArray(dataset);

@@ -15,7 +15,9 @@ async function initialize() {
         return;
     }
 
-    window.dataset = dataset;
+    document.getElementById('dataset-name').innerText = dataset.name;
+
+    window.dataset = dataset.dataset;
     window.current = -1;
     window.hashExplained = hash;
     next();

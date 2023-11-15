@@ -65,6 +65,7 @@ async function getDataset(hash) {
     }
 
     let dataset = datasetText.split('\n').filter(x => x.length && x.length > 3);
+    const datasetName = dataset.shift();
     dataset.shift();
 
     dataset = dataset.map(x => {
@@ -88,5 +89,8 @@ async function getDataset(hash) {
         dataset = dataset.slice(hash.starting - 1, hash.ending);
     }
 
-    return dataset;
+    return {
+        name: datasetName,
+        dataset,
+    };
 }

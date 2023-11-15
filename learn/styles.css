@@ -44,3 +44,10 @@
 #btn-next:active {
     background-color: #cacaca;
 }
+
+#dataset-name {
+    text-align: center;
+    font-size: 20pt;
+    font-weight: bold;
+    padding: 20px;
+}
