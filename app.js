@@ -1,6 +1,7 @@
 'use strict';
 
 const DATASETS = [
+    // { name: 'Test', key: 'test', size: 11 },
     { name: 'Basic words', key: 'basic', size: 108 },
     { name: 'Family and friends', key: 'family', size: 67 },
     { name: 'Food', key: 'food', size: 67 },

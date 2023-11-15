@@ -62,7 +62,7 @@ settingsHideSlavInput.oninput = () => {
 }
 
 function next() {
-    if (window.hashExplained.starting === window.hashExplained.ending) {
+    if (!window.hashExplained.all && (window.hashExplained.starting === window.hashExplained.ending)) {
         window.current = 0;
     } else {
         const next = settingsOrderInput.checked ? 

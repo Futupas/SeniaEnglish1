@@ -60,7 +60,8 @@ function next() {
 
     const question = window.dataset[next - 1];
 
-    const correctAnswer = question.reverse ? question.english : question.ukrainian;
+    const correctAnswer1 = question.reverse ? question.english : question.ukrainian;
+    const correctAnswer2 = question.reverse ? question.english : question.russian;
 
     function checkLast() {
         if (next === window.dataset.length - 1) {
@@ -76,16 +77,18 @@ function next() {
         }
     }
 
-    if (correctAnswer === input) {
+    if (correctAnswer1 === input || correctAnswer2 === input) {
         infoDiv.innerText = 'Correct!';
         blurDiv.style.backgroundColor = 'rgba(0, 255, 0, .1)';
         blurDiv.classList.remove('hidden');
         setTimeout(() => {
             blurDiv.classList.add('hidden');
             checkLast();
-        }, 200);
+        }, 500);
     } else {
-        infoDiv.innerText = 'Incorrect(\n\nCorrect answer is "' + correctAnswer + '"';
+        infoDiv.innerText =  correctAnswer1 === correctAnswer2 ? 
+            `Incorrect(\n\nCorrect answer is "${correctAnswer1}"` :
+            `Incorrect(\n\nCorrect answer is "${correctAnswer1}" or "${correctAnswer2}"`;
         blurDiv.style.backgroundColor = 'rgba(255, 0, 0, .1)';
         blurDiv.classList.remove('hidden');
         window.mistakes.push({ ...question, answer: input});
