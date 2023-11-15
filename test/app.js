@@ -15,9 +15,10 @@ async function initialize() {
     document.getElementById('dataset-name').innerText = dataset.name;
 
     dataset = dataset.dataset.map(x => { return { ...x, reverse: false }; });
-    const reverseDataset = dataset.map(x => { return { ...x, reverse: true }; });
-    dataset.push(...reverseDataset);
     shuffleArray(dataset);
+    const reverseDataset = dataset.map(x => { return { ...x, reverse: true }; });
+    shuffleArray(reverseDataset);
+    dataset.push(...reverseDataset);
 
     window.dataset = dataset;
     window.current = -1;
@@ -31,6 +32,7 @@ initialize();
 window.onhashchange = () => { initialize(); }
 
 function next() {
+    //todo divide into 'Check previos' and 'Prepare next'
     const input = document.getElementById('input').value.trim().toLowerCase();
     if (window.current !== -1 && !input?.length) {
         return;
@@ -48,8 +50,13 @@ function next() {
         return;
     }
 
-    document.getElementById('main').innerText = JSON.stringify(window.dataset[next]);
+    const showingQuestion = window.dataset[next];
+    document.getElementById('main').innerText = showingQuestion.reverse ? 
+        showingQuestion.ukrainian : 
+        showingQuestion.english;
 
+    document.getElementById('input').value = '';
+    document.getElementById('input').setAttribute('placeholder', (showingQuestion.reverse ? 'English...' : 'Українська'));
 
     if (next === 0) return;
 
@@ -66,8 +73,6 @@ function next() {
         //todo somehow handle it
         window.errors.push({ ...question, answer: input});
     }
-
-    document.getElementById('input').value = '';
 }
 
 document.getElementById('btn-next').onclick = () => { next(); };
@@ -78,5 +83,11 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         // Swap array[i] and array[j]
         [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+document.getElementById('input').onkeyup = e => {
+    if (e.code === 'Enter' || e.code === 'Space') {
+        next();
     }
 }
