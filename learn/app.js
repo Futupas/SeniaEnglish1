@@ -50,7 +50,7 @@ async function initialize() {
     }
 
     window.dataset = dataset;
-    window.current = 0;
+    window.current = -1;
     next();
 }
 
