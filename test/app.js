@@ -1,5 +1,8 @@
 'use strict';
 
+const blurDiv = document.getElementById('blur');
+const infoDiv = document.querySelector('#blur > .info');
+
 async function initialize() {
     const hash = parseHash();
     if (!hash.ok) {
@@ -44,9 +47,14 @@ function next() {
     if (next === window.dataset.length - 1) {
         document.getElementById('btn-next').innerText = 'Finish';
     } else if (next === window.dataset.length) {
-        console.log('Finished.');
-        document.getElementById('main').innerText = 'Finished';
+        console.log('Finished');
         console.log(window.errors);
+        infoDiv.innerText = 'Finished ';
+        window.finished = true;
+        blurDiv.style.backgroundColor = 'rgba(0, 0, 255, .1)';
+        blurDiv.classList.remove('hidden');
+        document.getElementById('main').classList.add('disabled');
+        document.getElementById('main').remove();
         return;
     }
 
@@ -62,15 +70,21 @@ function next() {
 
     const question = window.dataset[next - 1];
 
-    const correct = question.reverse ? 
-        (input === question.english) :
-        (input === question.ukrainian);
+    const correctAnswer = question.reverse ? question.english : question.ukrainian;
 
-    if (correct) {
-        console.log('Correct');
+    if (correctAnswer === input) {
+        infoDiv.innerText = 'Correct!';
+        blurDiv.style.backgroundColor = 'rgba(0, 255, 0, .1)';
+        blurDiv.classList.remove('hidden');
+        blurDiv.focus();
+        setTimeout(() => {
+            blurDiv.classList.add('hidden');
+        }, 200);
     } else {
-        console.log('Incorrect', question);
-        //todo somehow handle it
+        infoDiv.innerText = 'Incorrect(\n\nCorrect answer is "' + correctAnswer + '"';
+        blurDiv.style.backgroundColor = 'rgba(255, 0, 0, .1)';
+        blurDiv.classList.remove('hidden');
+        blurDiv.focus();
         window.errors.push({ ...question, answer: input});
     }
 }
@@ -81,13 +95,32 @@ document.getElementById('btn-next').onclick = () => { next(); };
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        // Swap array[i] and array[j]
-        [array[i], array[j]] = [array[j], array[i]];
+        [array[i], array[j]] = [array[j], array[i]]; // Swap array[i] and array[j]
     }
 }
 
+document.getElementById('input').onkeydown = e => {
+    if (!blurDiv.classList.contains('hidden')) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+    }
+}
 document.getElementById('input').onkeyup = e => {
-    if (e.code === 'Enter' || e.code === 'Space') {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    if (e.code === 'Enter') {
         next();
+    }
+}
+
+blurDiv.onclick = e => {
+    if (window.finished) return;
+    blurDiv.classList.add('hidden');
+}
+window.onkeyup = e => {
+    if (!blurDiv.classList.contains('hidden') && (e.code === 'Enter' || e.code === 'Space')) {
+        blurDiv.classList.add('hidden');
     }
 }

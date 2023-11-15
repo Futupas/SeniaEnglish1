@@ -23,20 +23,6 @@
     border-color: #666666;
 }
 
-/* #main > #card > .english {
-    font-size: 18pt;
-    font-weight: bold;
-}
-#main > #card > .russian {
-    margin-top: 10px;
-}
-
-#order-label {
-    padding: 20px;
-    display: block;
-    cursor: pointer;
-} */
-
 #btn-next {
     margin: 20px;
     padding: 5px 20px;
@@ -56,3 +42,30 @@
     font-weight: bold;
     padding: 20px;
 }
+
+.hidden {
+    display: none !important;
+}
+
+#blur {
+    position: fixed;
+    z-index: 10;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background-color: rgba(255, 0, 0, .1);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+}
+#blur > .info {
+    display: inline-block;
+    border: 2px solid black;
+    padding: 10px;
+    margin: 10px;
+    width: 500px;
+}
+
