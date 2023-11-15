@@ -20,30 +20,9 @@ async function initialize() {
         return;
     }
 
-    //todo real dataset
-
-    let dataset = FILE.split('\n').filter(x => x.length && x.length > 3);
-    dataset.shift();
-
-    dataset = dataset.map(x => {
-        x = x.replace('\r', '');
-        const splitted = x.split(',');
-        return {
-            english:       splitted[0].trim().toLowerCase(),
-            transcription: splitted[1],
-            pronunciation: splitted[2],
-            russian:       splitted[3].trim().toLowerCase(),
-            ukrainian:     splitted[4].trim().toLowerCase(),
-        };
-    })
-
-    if (!hash.all) {
-        if (hash.starting < 1 || hash.ending > dataset.length) {
-            alert('Error: Wrong start or end number');
-            return;
-        }
-
-        dataset = dataset.slice(hash.starting - 1, hash.ending);
+    let dataset = await getDataset(hash);
+    if (dataset === false) {
+        return;
     }
 
     dataset = dataset.map(x => { return { ...x, reverse: false }; });
@@ -61,51 +40,6 @@ async function initialize() {
 
 initialize();
 window.onhashchange = () => { initialize(); }
-
-function parseHash() {
-    const hash = window.location.hash;
-
-    if (!hash?.length) {
-        return {
-            ok: false,
-            reason: 'Hash is empty',
-        };
-    }
-
-    const parts = hash.replace('#', '').split('-').filter(x => x.length);
-
-    if (parts.length === 1) {
-        const dataset = parts[0];
-
-        return {
-            ok: true,
-            all: true,
-        };
-    } else if (parts.length === 3) {
-        const dataset = parts[0];
-        const starting = +parts[1];
-        const ending = +parts[2];
-
-        if (isNaN(starting) || isNaN(ending)) {
-            return {
-                ok: false,
-                reason: 'Wrong hash: starting or ending param',
-            };
-        }
-
-        return {
-            ok: true,
-            all: false,
-            starting,
-            ending,
-        };
-    }
-
-    return {
-        ok: false,
-        reason: 'Wrong hash',
-    };
-}
 
 function next() {
     const input = document.getElementById('input').value.trim().toLowerCase();
@@ -157,4 +91,3 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
