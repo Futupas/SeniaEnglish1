@@ -17,17 +17,22 @@
     text-align: center;
 }
 
-#main > #card > .english {
-    font-size: 18pt;
-    font-weight: bold;
+#main > #card > .all-eng {
+
 }
-#main > #card > .russian {
+#main > #card > .all-slav {
     margin-top: 10px;
 }
 
-#order-label {
+#main > #card .english {
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+#settings {
     padding: 20px;
-    /* margin-top: 10px; */
+}
+#settings > label {
     display: block;
     cursor: pointer;
 }
@@ -50,4 +55,17 @@
     font-size: 20pt;
     font-weight: bold;
     padding: 20px;
+}
+
+#card > div {
+    cursor: pointer;
+}
+
+#card > div.hidden {
+    /* background-color: #eeeeee; */
+    filter: blur(8px);
+}
+
+#card > div:hover {
+    background-color: #ddd;
 }
