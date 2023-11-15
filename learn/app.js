@@ -39,8 +39,12 @@ function next() {
         window.current = next;
     }
 
-    document.getElementById('main').innerText = JSON.stringify(window.dataset[window.current]);
-
+    const question = window.dataset[window.current]
+    document.querySelector('#main > #card > .english').innerText =       question.english;
+    document.querySelector('#main > #card > .transcription').innerText = question.transcription;
+    document.querySelector('#main > #card > .pronunciation').innerText = question.pronunciation;
+    document.querySelector('#main > #card > .russian').innerText =       question.russian;
+    document.querySelector('#main > #card > .ukrainian').innerText =     question.ukrainian;
 }
 
 document.getElementById('btn-next').onclick = () => { next(); };
@@ -59,3 +63,8 @@ function nextRandomInt(min, max, current = null) {
     }
 }
 
+window.onkeyup = e => {
+    if (e.code === 'Enter' || e.code === 'Space') {
+        next();
+    }
+}

@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    font-size: 16pt;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#main > #card {
+    border: 2px solid black;
+    padding: 5px;
+    display: inline-block;
+    max-width: calc(100% - 20px);
+    width: 500px;
+    margin: 10px;
+    text-align: center;
+}
+
+#main > #card > .english {
+    font-size: 18pt;
+    font-weight: bold;
+}
+#main > #card > .russian {
+    margin-top: 10px;
+}
+
+#order-label {
+    padding: 20px;
+    /* margin-top: 10px; */
+    display: block;
+    cursor: pointer;
+}
+
+#btn-next {
+    margin: 20px;
+    padding: 20px;
+    color: black;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+}
+#btn-next:hover,
+#btn-next:active {
+    background-color: #cacaca;
+}
