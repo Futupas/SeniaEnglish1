@@ -29,11 +29,11 @@ async function initialize() {
         x = x.replace('\r', '');
         const splitted = x.split(',');
         return {
-            english:       splitted[0],
+            english:       splitted[0].trim().toLowerCase(),
             transcription: splitted[1],
             pronunciation: splitted[2],
-            russian:       splitted[3],
-            ukrainian:     splitted[4],
+            russian:       splitted[3].trim().toLowerCase(),
+            ukrainian:     splitted[4].trim().toLowerCase(),
         };
     })
 
@@ -49,10 +49,12 @@ async function initialize() {
     dataset = dataset.map(x => { return { ...x, reverse: false }; });
     const reverseDataset = dataset.map(x => { return { ...x, reverse: true }; });
     dataset.push(...reverseDataset);
+    shuffleArray(dataset);
 
     window.dataset = dataset;
     window.current = -1;
     window.hashExplained = hash;
+    window.errors = [];
     next();
 }
 
@@ -106,6 +108,11 @@ function parseHash() {
 }
 
 function next() {
+    const input = document.getElementById('input').value.trim().toLowerCase();
+    if (window.current !== -1 && !input?.length) {
+        return;
+    }
+
     const next = window.current + 1;
     window.current = next;
 
@@ -114,13 +121,40 @@ function next() {
     } else if (next === window.dataset.length) {
         console.log('Finished.');
         document.getElementById('main').innerText = 'Finished';
+        console.log(window.errors);
         return;
     }
 
     document.getElementById('main').innerText = JSON.stringify(window.dataset[next]);
 
+
+    if (next === 0) return;
+
+    const question = window.dataset[next - 1];
+
+    const correct = question.reverse ? 
+        (input === question.english) :
+        (input === question.ukrainian);
+
+    if (correct) {
+        console.log('Correct');
+    } else {
+        console.log('Incorrect', question);
+        //todo somehow handle it
+        window.errors.push({ ...question, answer: input});
+    }
+
+    document.getElementById('input').value = '';
 }
 
 document.getElementById('btn-next').onclick = () => { next(); };
 
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        // Swap array[i] and array[j]
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
 
