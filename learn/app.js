@@ -121,6 +121,12 @@ document.querySelector('#card > div.all-eng').onclick = e => {
 document.querySelector('#card > div.all-slav').onclick = e => {
     const hideSlav = !!settingsHideSlavInput.checked;
     if (!hideSlav) return;
-    
+
     document.querySelector('#card > div.all-slav').classList.remove('hidden');
 }
+
+Array.from(document.querySelectorAll('input')).forEach(x => {
+    x.onkeyup = e => {
+        e.preventDefault();
+    };
+})

@@ -69,3 +69,8 @@
 #card > div:hover {
     background-color: #ddd;
 }
+
+input {
+    outline: none !important;
+}
+
