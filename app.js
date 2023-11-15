@@ -2,6 +2,15 @@
 
 const DATASETS = [
     { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
+    { name: 'Basic', key: 'basic', size: 10 },
 ];
 const COUNT_PER_ONE = 3;
 
